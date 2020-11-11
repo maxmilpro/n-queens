@@ -81,10 +81,8 @@
     hasRowConflictAt: function(rowIndex) {
       // create a counter
       var counter = 0;
-      debugger;
       // iterate over the rowIndex
       for (var i = 0; i < this.attributes[rowIndex].length; i++) {
-        debugger;
         // if current element is a 1
         if (this.attributes[rowIndex][i] === 1) {
           // increase counter
@@ -158,12 +156,55 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      //create counter variable
+      var counter = 0;
+      //create a board
+      var newBoard = this.rows();
+      //create var for current column
+      var currCol = majorDiagonalColumnIndexAtFirstRow;
+      //create rowIndex
+      var rowIndex;
+      //iterate over the board
+      for (var j = 0; j < newBoard.length; j++) {
+        // if the current row has a one
+        if (newBoard[j].indexOf(1) >= 0) {
+          // set rowIndex
+          rowIndex = j;
+          break;
+        }
+      }
+      //iterate over the board starting at rowIndex
+      for (var i = rowIndex; i < newBoard.length; i++) {
+        //if the element at the column index is undefined
+        if (newBoard[i][currCol] === undefined) {
+          //then break
+          break;
+        }
+        //if the element at the column index is one
+        if (newBoard[i][currCol] === 1) {
+          //increase counter by one
+          counter++;
+        }
+        //also increase col index by one
+        currCol++;
+      }
+      //return if the counter is greater than one
+      return counter > 1;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      //store the first row in variable
+      var firstRow = this.get(0);
+      //iterate over the first row
+      for (var i = 0; i < firstRow.length; i++) {
+        //if the diagonal starting at current column has a conflict
+        if (this.hasMajorDiagonalConflictAt(i)) {
+          //return true
+          return true;
+        }
+      }
+      return false;
     },
 
 
