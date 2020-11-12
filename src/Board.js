@@ -236,11 +236,78 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      // if the input is greater than the length of the first row
+      if (minorDiagonalColumnIndexAtFirstRow > this.get(0).length) {
+        // subtract the length of the first row from the input and set equal to current column
+        var currCol = minorDiagonalColumnIndexAtFirstRow - this.get(0).length;
+      // otherwise
+      } else {
+        // set current column variable equal to input
+        var currCol = minorDiagonalColumnIndexAtFirstRow;
+      }
+      // create inbounds array
+      var inbounds = [];
+      // create out of bounds array
+      var outOfBounds = [];
+      // create inbounds sum
+      var inboundsSum = 0;
+      // create out of bounds array
+      var outOfBoundsSum = 0;
+      // create a new board
+      var newBoard = this.rows();
+      // iterate over the board starting at the first row
+      for (var i = 0; i < newBoard.length; i++) {
+        // create a container and store the row, col, and value
+        var container = {};
+        // if inbounds
+        if (this._isInBounds(i, currCol)) {
+          // add to inbounds array
+          inbounds.push({'row': i, 'col': currCol, 'val': newBoard[i][currCol]});
+        // else
+        } else {
+          // add to out of bounds array
+          outOfBounds.push({'row': i, 'col': currCol, 'val': newBoard[i][currCol + newBoard.length]});
+        }
+        // decrease column index by 1
+        currCol--;
+      }
+      // if there is more than one element in the inbounds array
+      if (inbounds.length > 1) {
+        // iterate over the inbounds array
+        for (var j = 0; j < inbounds.length; j++) {
+          // add each value to the inbounds sum
+          inboundsSum += inbounds[j]['val'];
+        }
+      }
+      // if there is more than one element in the out of bounds array
+      if (outOfBounds.length > 1) {
+        // iterate over the out of bounds array
+        for (var k = 0; k < outOfBounds.length; k++) {
+          // add each value to the out of bounds sum
+          outOfBoundsSum += outOfBounds[k]['val'];
+        }
+      }
+      // return if the inbounds sum or out of bounds sum is greater than 1
+      return inboundsSum > 1 || outOfBoundsSum > 1; // fixme
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
+      // create a new board
+      var newBoard = this.rows();
+      // iterate over the rows
+      for (var i = 0; i < newBoard.length; i++) {
+        // iterate over the columns
+        for (var j = 0; j < newBoard[i].length; j++) {
+          // create the col index at the first row
+          var columnIndexAtFirstRow = this._getFirstRowColumnIndexForMajorDiagonalOn(i, j);
+          // if current index has a diagonal conflict
+          if (this.hasMinorDiagonalConflictAt(columnIndexAtFirstRow)) {
+            // return true
+            return true;
+          }
+        }
+      }
       return false; // fixme
     }
 
