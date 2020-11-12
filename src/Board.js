@@ -160,50 +160,72 @@
       var counter = 0;
       //create a board
       var newBoard = this.rows();
-      //create var for current column
-      var currCol = majorDiagonalColumnIndexAtFirstRow;
-      //create rowIndex
-      var rowIndex;
-      //iterate over the board
-      for (var j = 0; j < newBoard.length; j++) {
-        // if the current row has a one
-        if (newBoard[j].indexOf(1) >= 0) {
-          // set rowIndex
-          rowIndex = j;
-          break;
-        }
+      //create column index variable
+      var colIndex;
+      //if input is negative
+      if (majorDiagonalColumnIndexAtFirstRow < 0) {
+        //add the input to the length of the first row; set colIndex equal to value
+        colIndex = majorDiagonalColumnIndexAtFirstRow + newBoard[0].length;
+        //otherwise
+      } else {
+        //set column index equal to the input
+        colIndex = majorDiagonalColumnIndexAtFirstRow;
       }
-      //iterate over the board starting at rowIndex
-      for (var i = rowIndex; i < newBoard.length; i++) {
+      //iterate over the board starting at first row
+      for (var i = 0; i < newBoard.length; i++) {
         //if the element at the column index is undefined
-        if (newBoard[i][currCol] === undefined) {
-          //then break
+        if (newBoard[i][colIndex] === undefined) {
+          //reset counter
+          counter = 0;
+          //iterate over the board starting at the current row
+          for (var j = i; j < newBoard.length; j++) {
+            //if the element at (column index minus row length) equals one
+            if (newBoard[j][colIndex - newBoard[j].length] === 1) {
+              //increase counter by one
+              counter++;
+            }
+            //increase column indexby one
+            colIndex++;
+          }
+          // break
           break;
         }
         //if the element at the column index is one
-        if (newBoard[i][currCol] === 1) {
+        if (newBoard[i][colIndex] === 1) {
           //increase counter by one
           counter++;
         }
+        // if counter is greater than 1
+        if (counter > 1) {
+          // break
+          break;
+        }
         //also increase col index by one
-        currCol++;
+        colIndex++;
       }
       //return if the counter is greater than one
       return counter > 1;
+
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      //store the first row in variable
-      var firstRow = this.get(0);
-      //iterate over the first row
-      for (var i = 0; i < firstRow.length; i++) {
-        //if the diagonal starting at current column has a conflict
-        if (this.hasMajorDiagonalConflictAt(i)) {
-          //return true
-          return true;
+      //store entire board in variable
+      var newBoard = this.rows();
+      //iterate over the rows
+      for (var i = 0; i < newBoard.length; i++) {
+        //iterate over the columns
+        for (var j = 0; j < newBoard[i].length; j++) {
+          //create the columnIndex for the firstRow
+          var columnIndexAtFirstRow = this._getFirstRowColumnIndexForMajorDiagonalOn(i, j);
+          //if the current index has a diagonal conflict
+          if (this.hasMajorDiagonalConflictAt(columnIndexAtFirstRow)) {
+            //return true
+            return true;
+          }
         }
       }
+      //return false as a fallback
       return false;
     },
 
