@@ -138,6 +138,9 @@
     hasAnyColConflicts: function() {
       //store the first row in var
       var firstRow = this.get(0);
+      if (!firstRow) {
+        return false;
+      }
       //iterate over the first row
       for (var i = 0; i < firstRow.length; i++) {
         //if the current column has conflict
