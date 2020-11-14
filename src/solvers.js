@@ -66,11 +66,10 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(num) {
-  // set the solution to a new board with size n
-  // var solution = new Board();
+  var solution = undefined; // fix me
 
-  // if n is 0
-  if (num === 0) {
+  // if num is 0, 2, or 3
+  if (num === 0 || num === 2 || num === 3) {
     var board = new Board({n: num});
     // return the solution
     return board.rows();
@@ -79,39 +78,79 @@ window.findNQueensSolution = function(num) {
 
   //create a recursive function with 3 params: rowIndex, columnIndex, board
   var innerFunc = function(rowIndex, colIndex, board) {
-    //base case: if the rowIndex and colIndex are out of bounds
-    // if (!board._isInBounds(rowIndex, colIndex)) {
-    //   //just return
-    //   return;
-    // }
-    //base case: if the number of pieces on board is equal to n and there are no conflicts
-    if (_.reduce(_.flatten(board.rows()), function(memo, number) { return memo + number; }, 0) === num && !board.hasAnyQueensConflicts()) {
-      //return the board
-      return board;
+    //base case
+    // if the current row is equel to num
+    if (rowIndex === num) {
+      // return the board
+      solution = board.rows();
+      return solution;
     }
-    //recursive case: iterate over the row at the current rowIndex
+
+    //recursive case
+    // iterate over the row at the current rowIndex
     for (var i = 0; i < num; i++) {
       //toggle the element at the current rowIndex and columnIndex
       board.togglePiece(rowIndex, i);
-      //invoke recursive function on rowIndex + 1, colIndex, board
-      innerFunc(rowIndex + 1, colIndex, new Board(board.rows()));
-      //untoggle the current element at rowIndex, columnIndex
+      // if the board does not have any conflicts
+      if (!board.hasAnyQueensConflicts()) {
+        //invoke recursive function on rowIndex + 1, colIndex, board
+        innerFunc(rowIndex + 1, colIndex, board);
+        // if the solution is not undefined
+        if (solution !== undefined) {
+          // return the solution
+          return solution;
+        }
+      }
+      // untoggle the current element at rowIndex, columnIndex - we will hit this after we exit the previous recursive call
       board.togglePiece(rowIndex, i);
     }
   };
   //invoke the recursive function with rowIndex 0, colIndex 0, and empty board
-  debugger;
-  var solution = innerFunc(0, 0, new Board({n: num}));
+  innerFunc(0, 0, new Board({n: num}));
 
   console.log('Single solution for ' + num + ' queens:', JSON.stringify(solution));
   // return the solution
-  return solution.rows();
+  return solution;
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
-window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+window.countNQueensSolutions = function(num) {
+  var solutionCount = 0; //fixme
 
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  // if num is 0, 2, or 3
+  if (num === 2 || num === 3) {
+    // return the solutionCount
+    return solutionCount;
+  }
+
+
+  //create a recursive function with 3 params: rowIndex, columnIndex, board
+  var innerFunc = function(rowIndex, colIndex, board) {
+    //base case
+    // if the current row is equel to num
+    if (rowIndex === num) {
+      // increment solutionCount by 1
+      solutionCount++;
+      return;
+    }
+
+    //recursive case
+    // iterate over the row at the current rowIndex
+    for (var i = 0; i < num; i++) {
+      //toggle the element at the current rowIndex and columnIndex
+      board.togglePiece(rowIndex, i);
+      // if the board does not have any conflicts
+      if (!board.hasAnyQueensConflicts()) {
+        //invoke recursive function on rowIndex + 1, colIndex, board
+        innerFunc(rowIndex + 1, colIndex, board);
+      }
+      // untoggle the current element at rowIndex, columnIndex - we will hit this after we exit the previous recursive call
+      board.togglePiece(rowIndex, i);
+    }
+  };
+  //invoke the recursive function with rowIndex 0, colIndex 0, and empty board
+  innerFunc(0, 0, new Board({n: num}));
+
+  console.log('Number of solutions for ' + num + ' queens:', solutionCount);
   return solutionCount;
 };
